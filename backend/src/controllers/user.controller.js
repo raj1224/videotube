@@ -4,6 +4,7 @@ import { User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
 
 
 
@@ -170,7 +171,7 @@ const logoutUser = asyncHandler(async(req, res) => {
             }
         },
         {
-            new: true
+            returnDocument: "after"
         }
     )
 
@@ -280,7 +281,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
                 email: email
             }
         },
-        {new: true}
+        {returnDocument: "after"}
         
     ).select("-password")
 
@@ -312,7 +313,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
                 avatar: avatar.url
             }
         },
-        {new: true}
+        {returnDocument: "after"}
     ).select("-password")
 
     return res
@@ -346,7 +347,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
                 coverImage: coverImage.url
             }
         },
-        {new: true}
+        {returnDocument: "after"}
     ).select("-password")
 
     return res
