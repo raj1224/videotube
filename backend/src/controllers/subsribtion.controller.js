@@ -18,7 +18,7 @@ const { channelId } = req.params
 if (!channelId) {
    throw new ApiError(400, "channel id not found while toggling subscription");
    }
-    const { subscriberId } = req.user?._id;
+    const subscriberId  = req.user?._id;
     if (!subscriberId) {
         throw new ApiError(400, "subscriber to the channel is not defined while toggling");
     }
@@ -81,7 +81,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     */
     const channelSubs = await Subscription.find({
         channel: channelId,
-    }).populate("_id name email subscriber"); // populate more items in it like subscriber details../
+    }).populate("subscriber", "_id name email"); // populate more items in it like subscriber details../
     if (!channelSubs || channelSubs.length === 0) {
         throw new ApiError(400, "channel subs not found or empty");
     }
@@ -101,7 +101,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     */
     const userSubs = await Subscription.find({
         subscriber: subscriberId
-    }).populate("_id name email channel"); // to populate more items like channel details , name and email and id etc.
+    }).populate("channel", "_id name email"); // to populate more items like channel details , name and email and id etc.
     if (!subscriberId || userSubs.length === 0 || !userSubs) {
         throw new ApiError(404, "either the subscriber doesnt exist or the list of channels are empty or channel doesnt exist");
     }
