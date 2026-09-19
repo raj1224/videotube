@@ -40,7 +40,7 @@ if (!channelId) {
             new ApiResponse(
                 200,
                 {},
-                "Deleted user"
+                "unsubsribe user successfully"
             )
         )
     }
@@ -53,7 +53,7 @@ if (!channelId) {
             new ApiResponse(
                 201,
                 {},
-                "Created User"
+                "subscribe user successfully"
             )
         )
 
@@ -106,7 +106,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
         throw new ApiError(404, "either the subscriber doesnt exist or the list of channels are empty or channel doesnt exist");
     }
     return res.status(200).json(
-        new ApiResponse(200,userSubs,"channels a user has subbed to is found")
+        new ApiResponse(200,userSubs,"channels a user has subscribed to is found")
     )
 })
 
