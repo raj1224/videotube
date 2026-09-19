@@ -20,7 +20,7 @@ import userRouter from './routes/user.route.js' //🟢 tested
 import healthcheckRouter from './routes/healthcheck.route.js'
 import subscriptionRouter from './routes/subscription.route.js' //🟢 tested
 import tweetRouter from './routes/tweet.route.js' //🟢 tested
-import videoRouter from './routes/video.route.js'
+import videoRouter from './routes/video.route.js' //🟢 tested except (update and togglepublish)
 import commentRouter from './routes/comment.route.js'
 import likeRouter from './routes/like.route.js'
 import dashboardRouter from './routes/dashboard.route.js'
