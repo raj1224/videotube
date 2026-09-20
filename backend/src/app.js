@@ -21,10 +21,10 @@ import healthcheckRouter from './routes/healthcheck.route.js'
 import subscriptionRouter from './routes/subscription.route.js' //🟢 tested
 import tweetRouter from './routes/tweet.route.js' //🟢 tested
 import videoRouter from './routes/video.route.js' //🟢 tested except (update and togglepublish)
-import commentRouter from './routes/comment.route.js'
-import likeRouter from './routes/like.route.js'
-import dashboardRouter from './routes/dashboard.route.js'
-import playlistRouter from './routes/playlist.route.js'
+import commentRouter from './routes/comment.route.js' // 🟢 tested
+import likeRouter from './routes/like.route.js' // 🟢 tested
+import dashboardRouter from './routes/dashboard.route.js' // 🟢 tested
+import playlistRouter from './routes/playlist.route.js' // 🟢 tested
 
 //routes declaration
 app.use("/api/v1/healthcheck", healthcheckRouter)

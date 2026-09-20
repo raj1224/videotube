@@ -5,100 +5,86 @@ import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 
 const getVideoComments = asyncHandler(async (req, res) => {
-    //TODO: get all comments for a video
-    const {videoId} = req.params
-    const { page = 1, limit = 10 } = req.query;
-    const  userId  = req.user?._id;
 
-    /*
- /**
- * 💬 GET VIDEO COMMENTS -->
- *
- * 🧠 What this does:
- *    - Gets all comments for a given video
- *    - Adds commenter info (username, avatar)
- *    - Supports pagination (with skip & limit)
- *
- * 🔁 Aggregation Breakdown:
- *
- * 1. 🎯 Match: Filter comments only for the given video ID
- *
- * 2. 🤝 Lookup: Join each comment with its owner's user data
- *    - Only grab username and avatar to keep it light
- *
- * 3. 🔨 AddFields: Flatten the joined user array into a single object
- *    - Easier to access on frontend
- *
- * 4. 📅 Sort: Sort comments by most recent first (createdAt descending)
- *
- * 5. ⏭ Skip: Skip comments based on the current page (pagination)
- *
- * 6. 🎯 Limit: Limit the number of comments returned per page
- *
- * 7. 📦 Project: Send only the useful fields to frontend
- *    - content, createdAt, owner ID, and commenter info
- */
-    const skip = (page - 1) * limit;
+    const { videoId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400, "Invalid video ID");
     }
 
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
     const videoComments = await Comment.aggregate([
+        // 1. Video ke comments filter karo
         {
             $match: {
-                video: new mongoose.Types.ObjectId(videoId),
+                video: new mongoose.Types.ObjectId(videoId)
             }
-
         },
+
+        // 2. Comment owner ki information lao
         {
             $lookup: {
                 from: "users",
-                localField:"owner",
+                localField: "owner",
                 foreignField: "_id",
-                as: "ownerDetails",
-                pipeline: [
-                    {
-                        $project: {
-                            username: 1,
-                            avatar:1
-                        }
-                    }
-                ]
+                as: "ownerDetails"
             }
         },
+
+        // 3. ownerDetails array ko single object banao
         {
             $addFields: {
                 commenterOfVideo: {
-                 $first:"ownerDetails"
+                    $arrayElemAt: ["$ownerDetails", 0]
                 }
             }
         },
-        { $sort: { createdAt: -1 } },
-        { $skip: skip },
-        { $limit: parseInt(limit) },
+
+        // 4. Newest comments first
+        {
+            $sort: {
+                createdAt: -1
+            }
+        },
+
+        // 5. Pagination
+        {
+            $skip: skip
+        },
+
+        {
+            $limit: parseInt(limit)
+        },
+
+        // 6. Sirf required data bhejo
         {
             $project: {
-                commenterOfVideo: 1,
                 content: 1,
-                owner:1
+                createdAt: 1,
+                owner: 1,
+                "commenterOfVideo.username": 1,
+                "commenterOfVideo.avatar": 1
             }
         }
-    ])
+    ]);
 
-    if (!videoComments || videoComments.length ===0) {
-        throw new ApiError(404,
-            "video comments not found while getting video comments"
-        )
+    if (videoComments.length === 0) {
+        throw new ApiError(
+            404,
+            "No comments found for this video"
+        );
     }
+
     return res.status(200).json(
         new ApiResponse(
             200,
             videoComments,
-            "video comments fetched successfully"
+            "Video comments fetched successfully"
         )
-    )
-
-})
+    );
+});
 
 const addComment = asyncHandler(async (req, res) => {
     // TODO: add a comment to a video
